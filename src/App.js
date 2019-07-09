@@ -26,7 +26,11 @@ class App extends React.Component{
       const api_url = await
       fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`);
       const data = await api_url.json();
-      
+      console.log(data)
+      const api_url1 = await
+      fetch(` http://api.apixu.com/v1/current.json?key=9a6bb15c57ca4a3ba3b122603190907&q=Paris`);
+      const data1 = await api_url1.json();
+      console.log(data1)
       var sunset = data.sys.sunset;
       var date = new Date();
       date.setTime(sunset);

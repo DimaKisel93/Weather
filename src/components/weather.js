@@ -3,7 +3,7 @@ import React from "react";
 const Weather = props => ( 
     <div>
     {props.temp &&
-      <div>
+      <div className="infoWeath">
         <p>Местоположение: {props.city}, {props.country}</p>
         <p>Температура:{props.temp}</p>
         <p>Давление:{props.pressure}</p>
@@ -11,7 +11,7 @@ const Weather = props => (
         <p>Cкорость Ветра:{props.wind}</p>
       </div>
     }
-    <p>{props.error}</p>
+    <p className="error">{props.error}</p>
     </div>
 );
 

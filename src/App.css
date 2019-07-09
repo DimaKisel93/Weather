@@ -24,14 +24,11 @@ body {
   height: 55vh;
   background: #2a6bb1;
   box-shadow: 0px 2px 80px -20px rgba(0,0,0,0.5);
-  width: 60%;
   margin: 0 auto;
 }
 
 .info {
   height: 55vh;
-  /* background: url("img/polygon.jpg") center center no-repeat; */
-  background-blend-mode: multiply;
   background-color: #484747;
   border: 2px solid #1f1f1f;
   border-right: 2px solid #131e29;
@@ -45,7 +42,7 @@ body {
 
 .form {
   height: 55vh;
-  padding-top: 100px;
+  padding-top: 20px;
   padding-left: 50px;
   border-top: 2px solid #113a65;
   border-bottom: 2px solid #113a65;
@@ -62,8 +59,7 @@ input[type="text"] {
   font-weight: lighter;
   margin-bottom: 30px;
   margin-right: 20px;
-  font-size: 20px;
-  outline: none;
+  
 }
 
 input::-webkit-input-placeholder {
@@ -99,6 +95,8 @@ button:active {
   top: 2px;
 }
 
+
+
 .info h2 {
   font-size: 3em;
   color: #fff;
@@ -118,4 +116,23 @@ button:active {
 .error {
   color: #041f3c;
   font-weight: bold;
+}
+
+.source{
+  display: flex;
+  flex-direction: column;
+}
+
+.source__choice{
+  text-align: center;
+}
+
+.source__button{
+  margin-right: 20px;
+}
+
+
+
+.sourec__item{
+  display: inline;
 }
