@@ -21,17 +21,17 @@ body {
 }
 
 .main {
-  height: 55vh;
+  height: 75vh;
   background: #2a6bb1;
   box-shadow: 0px 2px 80px -20px rgba(0,0,0,0.5);
   margin: 0 auto;
 }
 
 .info {
-  height: 55vh;
+  height: 75vh;
   background-color: #484747;
-  border: 2px solid #1f1f1f;
-  border-right: 2px solid #131e29;
+  /* border: 2px solid #1f1f1f; */
+  /* border-right: 2px solid #131e29; */
   background-size: cover;
   display: flex;
   align-items: center;
@@ -41,12 +41,12 @@ body {
 }
 
 .form {
-  height: 55vh;
+  height: 75vh;
   padding-top: 20px;
   padding-left: 50px;
-  border-top: 2px solid #113a65;
-  border-bottom: 2px solid #113a65;
-  border-right: 2px solid #113a65;
+  /* border-top: 2px solid #113a65; */
+  /* border-bottom: 2px solid #113a65; */
+  /* border-right: 2px solid #113a65; */
 }
 
 input[type="text"] {
