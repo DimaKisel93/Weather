@@ -25,9 +25,9 @@ const Info = props => (
   
   <div>
     <h2>Погодное приложение</h2>
-    <p>Узнайте погоду в вашем городе</p>
+    <p>Узнайте погоду в любом городе</p>
     <p>Ваш город</p>
-    <p>{props.towns}</p>
+    <p>{props.town}</p>
     {/* <YMaps
       query={{
         apikey: '4ed9ddb3-e69d-4a30-906f-ca5046791f20',

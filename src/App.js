@@ -11,14 +11,12 @@ class App extends React.Component{
     super(props);
     this.state = {
       temp: undefined,
-      // city: undefined,
       country: undefined,
       pressure: undefined,
       wind: undefined,
       error: undefined,
-      town:'',
+      ourCity:'',
       city:'',
-      // data:{}
     }
   }
   async componentDidMount () {
@@ -29,7 +27,9 @@ class App extends React.Component{
     const city_url = await fetch(`https://ip-location.icu/api/v1/city/?format=json&apiKey=1kCB9PKk5aYnCvJevQvHWqIxmt5t7xnSYAIQpddZ&ip=${ip}`);
     const cityData = await city_url.json();
     const city = await cityData.city_name;
-    this.setState({town: city})
+    localStorage.setItem("ourCity", city)
+    const ourCity = localStorage.getItem("ourCity")
+    this.setState({ourCity: ourCity})
   } 
   
   onChange = event =>{
@@ -52,30 +52,37 @@ class App extends React.Component{
     debugger;
     let cachedData = localStorage.getItem(serviceName+city);
     cachedData = JSON.parse(cachedData);
+    
+    
     const nowTime = +new Date();
-    const currentTime = (nowTime-cachedData.lastRunAT)/3600000; 
+    if (cachedData){
+      var currentTime = (nowTime-cachedData.lastRunAT)/3600000;  
+    }
+    
       switch(serviceName){
         case "openmap": 
-       
+         
         if (cachedData && currentTime < 2) {
-       
           this.setState({ 
             temp: cachedData.main.temp,
             city: cachedData.name,
-            contry: cachedData.sys.country,
+            country: cachedData.sys.country,
             pressure: cachedData.main.pressure,
             wind: cachedData.wind.speed,
             error: undefined
           });
+         
         } else {
+           
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`)
             .then(response => response.json())
-            .then(result => this.onSetResult(result, city,serviceName))
+            .then(result => this.onSetResult(result, city,serviceName));
+              
         }
         break;
        
         case "apixu": 
-        if (cachedData) {
+        if (cachedData && currentTime <2) {
           this.setState({
             temp: cachedData.current.temp_c,
             city: cachedData.location.name,
@@ -96,6 +103,8 @@ class App extends React.Component{
   onSetResult = (result, city, serviceName) => {
     result.lastRunAT = +new Date();
     localStorage.setItem(serviceName+city, JSON.stringify(result));
+   
+    
     switch (serviceName){
       case "openmap":
         this.setState({ 
@@ -129,7 +138,7 @@ class App extends React.Component{
             <div className="row">
               <div className="col-sm-5 info">
                 <Info cityMethod={this.getCity}
-                      towns = {this.state.town}/>
+                      town = {this.state.ourCity}/>
               </div>
               <div className="col-sm-7 form">
                 <Form weatherMethod={this.gettingWeather} gettingCity={this.onChange}/>  
