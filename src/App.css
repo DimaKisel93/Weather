@@ -9,7 +9,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-
   background: rgba(45,176,224,1);
   background: -moz-linear-gradient(45deg, rgba(45,176,224,1) 0%, rgba(96,40,168,1) 100%);
   background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(45,176,224,1)), color-stop(100%, rgba(96,40,168,1)));
@@ -30,8 +29,6 @@ body {
 .info {
   height: 75vh;
   background-color: #484747;
-  /* border: 2px solid #1f1f1f; */
-  /* border-right: 2px solid #131e29; */
   background-size: cover;
   display: flex;
   align-items: center;
@@ -42,11 +39,9 @@ body {
 
 .form {
   height: 75vh;
+  background: #2a6bb1;
   padding-top: 20px;
   padding-left: 50px;
-  /* border-top: 2px solid #113a65; */
-  /* border-bottom: 2px solid #113a65; */
-  /* border-right: 2px solid #113a65; */
 }
 
 input[type="text"] {
@@ -81,24 +76,22 @@ button {
   color: #fff;
   outline: none!important;
 }
+button::-moz-focus-inner {
+  border: none;
+}
 
 button:hover {
-  border-bottom: 2px solid #103a65;
   position: relative;
   top: 2px;
 }
 
 button:active {
-  border-bottom: 2px solid transparent;
-  border-color: transparent;
   position: relative;
   top: 2px;
 }
 
-
-
 .info h2 {
-  font-size: 3em;
+  font-size: 2em;
   color: #fff;
 }
 
@@ -107,7 +100,7 @@ button:active {
   font-weight: bold;
 }
 
-.infoWeath {
+.info__Weather {
   width: 60%;
   font-size: 16px;
   color: #fff;
@@ -121,6 +114,7 @@ button:active {
 .source{
   display: flex;
   flex-direction: column;
+  color:#fff;
 }
 
 .source__choice{
@@ -133,6 +127,6 @@ button:active {
 
 
 
-.sourec__item{
+.source__item{
   display: inline;
 }

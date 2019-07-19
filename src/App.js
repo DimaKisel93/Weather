@@ -2,9 +2,7 @@ import React from "react";
 import Info from "./components/info";
 import Form from "./components/form";
 import Weather from "./components/weather";
-
-const API_KEY = "125068128513a6c2a72f650bc8020952";
-
+import {API_KEY_OPENMAP, API_KEY_APIXU, API_KEY_GEOLOCATION, limitTimeRequest, translateMStoHours, nameOpenmapServer, nameApixuServer} from "./const/data"; 
 
 class App extends React.Component{
   constructor(props){
@@ -12,122 +10,141 @@ class App extends React.Component{
     this.state = {
       temp: undefined,
       country: undefined,
-      pressure: undefined,
-      wind: undefined,
+      humidity: undefined,
       error: undefined,
       ourCity:'',
-      city:'',
+      inputCity:''
     }
   }
-  async componentDidMount () {
-    const ip_url = await fetch('https://ip-location.icu/api/v1/user-info/?format=json&apiKey=1kCB9PKk5aYnCvJevQvHWqIxmt5t7xnSYAIQpddZ')
-    const ipData = await ip_url.json()
-    const ip = await ipData.ip;
 
-    const city_url = await fetch(`https://ip-location.icu/api/v1/city/?format=json&apiKey=1kCB9PKk5aYnCvJevQvHWqIxmt5t7xnSYAIQpddZ&ip=${ip}`);
+  componentDidMount () {
+    this.getCurrentCity()
+  };
+
+  async getCurrentCity(){
+    const ip_url = await fetch(`https://ip-location.icu/api/v1/user-info/?format=json&apiKey=${API_KEY_GEOLOCATION}`);
+    const ipData = await ip_url.json();
+    const ip = await ipData.ip;
+    
+    const city_url = await fetch(`https://ip-location.icu/api/v1/city/?format=json&apiKey=${API_KEY_GEOLOCATION}&ip=${ip}`);
     const cityData = await city_url.json();
     const city = await cityData.city_name;
-    localStorage.setItem("ourCity", city)
-    const ourCity = localStorage.getItem("ourCity")
+    localStorage.setItem("ourCity", city);
+    const ourCity = localStorage.getItem("ourCity");
     this.setState({ourCity: ourCity})
-  } 
-  
-  onChange = event =>{
-    this.setState({city:event.target.value})
   }
-
-  
-  
+ 
   gettingWeather = (e, serviceName) =>{
-    
     e.preventDefault();
-    const { city } = this.state;
+    const { inputCity } = this.state;
 
-    if (city === '') {
-      this.setState({
-        error: "Введите название города"
-      })  
+    if (inputCity === '') {
+      this.setState({error: "Введите название города"})  
       return;
     }
-    debugger;
-    let cachedData = localStorage.getItem(serviceName+city);
-    cachedData = JSON.parse(cachedData);
-    
-    
-    const nowTime = +new Date();
-    if (cachedData){
-      var currentTime = (nowTime-cachedData.lastRunAT)/3600000;  
-    }
-    
       switch(serviceName){
-        case "openmap": 
-         
-        if (cachedData && currentTime < 2) {
-          this.setState({ 
-            temp: cachedData.main.temp,
-            city: cachedData.name,
-            country: cachedData.sys.country,
-            pressure: cachedData.main.pressure,
-            wind: cachedData.wind.speed,
-            error: undefined
-          });
-         
-        } else {
-           
-        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`)
-            .then(response => response.json())
-            .then(result => this.onSetResult(result, city,serviceName));
-              
-        }
+        case nameOpenmapServer: 
+          this.getWeatherFromOpenMap(serviceName, inputCity)
         break;
        
-        case "apixu": 
-        if (cachedData && currentTime <2) {
-          this.setState({
-            temp: cachedData.current.temp_c,
-            city: cachedData.location.name,
-            contry: cachedData.location.country,
-            pressure: cachedData.current.pressure_mb,
-            wind: cachedData.current.wind_kph,
-            error: undefined 
-          })
-        }else{
-          fetch(` http://api.apixu.com/v1/current.json?key=9a6bb15c57ca4a3ba3b122603190907&q=${city}`)
-              .then(response => response.json())
-              .then(result => this.onSetResult(result, city,serviceName))
-        }
+        case nameApixuServer: 
+          this.getWeatherFromApixu(serviceName, inputCity)
         break;  
       }
   }
-  
-  onSetResult = (result, city, serviceName) => {
-    result.lastRunAT = +new Date();
-    localStorage.setItem(serviceName+city, JSON.stringify(result));
-   
+
+  getWeatherFromOpenMap(serviceName, inputCity) {
+    let cachedData = localStorage.getItem(this.localStorageKey(serviceName, inputCity));
+    cachedData = JSON.parse(cachedData);
+    const nowTime = +new Date();
+    if (cachedData) {
+      var currentTime = (nowTime-cachedData.lastRunAT) / translateMStoHours;
+    }
+    if (cachedData && currentTime < limitTimeRequest) {
+      this.setState({
+        temp: cachedData.main.temp,
+        inputCity: cachedData.name,
+        country: cachedData.sys.country,
+        humidity: cachedData.main.humidity,
+        error: undefined
+      });
+    } else {
+      this.getRequestToService(`https://api.openweathermap.org/data/2.5/weather?q=${inputCity}&appid=${API_KEY_OPENMAP}&units=metric`, inputCity, serviceName)
+    }
+  }
+
+  getWeatherFromApixu(serviceName, inputCity) {
+    let cachedData = localStorage.getItem(this.localStorageKey(serviceName, inputCity));
+    cachedData = JSON.parse(cachedData);
+    const nowTime = +new Date();
+    if (cachedData) {
+      var currentTime = (nowTime-cachedData.lastRunAT) / translateMStoHours;
+    }
+    if (cachedData && currentTime < limitTimeRequest) {
+      this.setState({
+        temp: cachedData.current.temp_c,
+        inputCity: cachedData.location.name,
+        country: cachedData.location.country,
+        humidity: cachedData.current.humidity,
+        error: undefined 
+      })
+    } else {
+      this.getRequestToService(`http://api.apixu.com/v1/current.json?key=${API_KEY_APIXU}&q=${inputCity}`, inputCity ,serviceName)
+    }
+  }
+
+  getRequestToService(url, serviceName, inputCity) {
+    fetch(url)
+            .then(response => {
+              if (response.ok){
+                return response.json()
+              } else {
+                throw new Error('Просим прощения, нет ответа сервера')
+              }
+            })
+            .then(result => this.SetResult(result, serviceName, inputCity))
+            .catch((error) => {
+              alert('Просим прощения, возникли проблемы с запросом к данному сервису', error)
+            });
+  }
+
+  setCity = event =>{
+    this.setState({
+      inputCity:event.target.value,
+      temp: undefined,
+      country: undefined,
+      humidity: undefined,
+      error: undefined,
+    })
+  };
+
+  localStorageKey(serviceName, inputCity)  {
+    return (serviceName+inputCity);
+  };
     
+  SetResult = (result, inputCity, serviceName) => {
+    result.lastRunAT = +new Date();
+    localStorage.setItem(this.localStorageKey(serviceName, inputCity), JSON.stringify(result));
     switch (serviceName){
-      case "openmap":
+      case nameOpenmapServer:
         this.setState({ 
           temp: result.main.temp,
-          city: result.name,
+          inputCity: result.name,
           country: result.sys.country,
-          pressure: result.main.pressure,
-          wind: result.wind.speed,
+          humidity: result.main.humidity,
           error: undefined
         });
         break;
-      case "apixu":
+      case nameApixuServer:
         this.setState({
             temp: result.current.temp_c,
-            city: result.location.name,
+            inputCity: result.location.name,
             country: result.location.country,
-            pressure: result.current.pressure_mb,
-            wind: result.current.wind_kph,
+            humidity: result.current.humidity,
             error: undefined 
         });
         break;    
     }
-    
   }
     render(){
     
@@ -136,18 +153,16 @@ class App extends React.Component{
         <div className="main">
           <div className="container">
             <div className="row">
-              <div className="col-sm-5 info">
-                <Info cityMethod={this.getCity}
-                      town = {this.state.ourCity}/>
+              <div className="col-xs-12 col-sm-5 col-md-4 info">
+                <Info town = {this.state.ourCity}/>
               </div>
-              <div className="col-sm-7 form">
-                <Form weatherMethod={this.gettingWeather} gettingCity={this.onChange}/>  
+              <div className="col-xs-12 col-sm-7 col-md-8 form">
+                <Form weatherMethod={this.gettingWeather} setInputCity={this.setCity}/>  
                 <Weather
                   temp = {this.state.temp}  
-                  city = {this.state.city}  
+                  city = {this.state.inputCity}  
                   country = {this.state.country}  
-                  pressure = {this.state.pressure}   
-                  wind = {this.state.wind} 
+                  humidity = {this.state.humidity}   
                   error = {this.state.error}  
                 />  
               </div>
