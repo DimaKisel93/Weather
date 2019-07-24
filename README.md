@@ -1,7 +1,7 @@
-Этот проект о погоде.Узнайте информацию о погоде в любом городе мира.Есть возможность выбирать погодные сервисы на выбор.Корректно отображается на всех устройствах.
+Этот проект о погоде. Узнайте информацию о погоде в любом городе мира. Есть возможность выбирать погодные сервисы на выбор. Корректно отображается на всех устройствах.
 Приложение написанно на React js.
 
-This project about weather service.Learn weather information in any city in the world.It is possible to choose weather services to choose from.Correctly displayed on all devices.
+This project about weather service. Learn weather information in any city in the world. It is possible to choose weather services to choose from. Correctly displayed on all devices.
 The application is written in React js.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
